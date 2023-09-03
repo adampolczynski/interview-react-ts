@@ -3,4 +3,11 @@
   height: 100%;
   padding: 10px;
   font-family: monospace;
+  display: grid;
+}
+.tree-node {
+  display: inline-block;
+}
+.tree-node::before {
+  content: '\00a0\00a0\00a0\00a0'; /* 4x'&nbsp;' */
 }
