@@ -3,17 +3,33 @@ import { useTree } from './tree.hook'
 import './index.css'
 
 const Tree = () => {
-  const { tree, isUpsideDown, redrawUpsideDown } = useTree()
+  const { tree, addNode, removeNode, isUpsideDown, redrawUpsideDown, isAlphabetized, alphabetize } = useTree()
 
   return (
     <div>
-      <b>Improved layout, redrawing upside-down, added prefix and dots</b>
+      <b>
+        1 & 2 - improved layout, load from file, redraw upside-down,
+        <p>added prefix and dots, 3 - add/remove node, 'alphabetize'</p>
+      </b>
       <div className="tree">
-        {tree.map(({ key, index, indentation, prefix }) => {
-          return <TreeNode key={index} index={index} indentation={indentation} nodeKey={`${prefix} ${key}`} />
+        {tree.map(({ key, index, indentation, prefix, textInput }) => {
+          return (
+            <TreeNode
+              key={index}
+              index={index}
+              indentation={indentation}
+              nodeKey={`${prefix} ${key}`}
+              displayTextInput={textInput}
+              handleEnter={addNode}
+              handleRemove={removeNode}
+            />
+          )
         })}
       </div>
+      <br />
       <button onClick={() => redrawUpsideDown()}>{isUpsideDown ? 'Back to normal' : 'Redraw upside down'}</button>
+      &nbsp;&nbsp;&nbsp;
+      <button onClick={() => alphabetize()}>{isAlphabetized ? 'De-alphabetize' : 'Alphabetize'}</button>
       <hr />
       <b>Initial 'inline' tree</b>
       <div className="tree">
