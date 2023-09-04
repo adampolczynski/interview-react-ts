@@ -3,33 +3,42 @@ import { useTree } from './tree.hook'
 import './index.css'
 
 const Tree = () => {
-  const { tree, addNode, removeNode, isUpsideDown, redrawUpsideDown, isAlphabetized, alphabetize } = useTree()
+  const { tree, addNode, removeNode, isUpsideDown, redrawUpsideDown, isAlphabetized, alphabetize, jsonBinLoading } = useTree()
 
   return (
     <div>
       <b>
-        1 & 2 - improved layout, load from file, redraw upside-down,
-        <p>added prefix and dots, 3 - add/remove node, 'alphabetize'</p>
+        1 & 2 - improved layout, load from file, redraw upside-down, added prefix and dots <br />
+        3 - interactions - add/remove node, 'alphabetize' <br />
+        4 - data persistence - save on tree change (JSONBIN integration) <br />
+        <br />
       </b>
-      <div className="tree">
-        {tree.map(({ key, index, indentation, prefix, textInput }) => {
-          return (
-            <TreeNode
-              key={index}
-              index={index}
-              indentation={indentation}
-              nodeKey={`${prefix} ${key}`}
-              displayTextInput={textInput}
-              handleEnter={addNode}
-              handleRemove={removeNode}
-            />
-          )
-        })}
-      </div>
-      <br />
-      <button onClick={() => redrawUpsideDown()}>{isUpsideDown ? 'Back to normal' : 'Redraw upside down'}</button>
-      &nbsp;&nbsp;&nbsp;
-      <button onClick={() => alphabetize()}>{isAlphabetized ? 'De-alphabetize' : 'Alphabetize'}</button>
+      {jsonBinLoading ? (
+        <span>Loading...</span>
+      ) : (
+        <>
+          <div className="tree">
+            {tree.map(({ key, index, indentation, prefix, textInput }) => {
+              return (
+                <TreeNode
+                  index={index}
+                  indentation={indentation}
+                  nodeKey={`${prefix} ${key}`}
+                  displayTextInput={textInput}
+                  handleEnter={addNode}
+                  handleRemove={removeNode}
+                />
+              )
+            })}
+          </div>
+          <br />
+          <button onClick={() => redrawUpsideDown()}>{isUpsideDown ? 'Back to normal' : 'Redraw upside down'}</button>
+          &nbsp;&nbsp;&nbsp;
+          <button onClick={() => alphabetize()}>{isAlphabetized ? 'De-alphabetize' : 'Alphabetize'}</button>
+          &nbsp;&nbsp;&nbsp;
+          <button onClick={() => window.localStorage.clear()}>Clear localStorage</button>
+        </>
+      )}
       <hr />
       <b>Initial 'inline' tree</b>
       <div className="tree">

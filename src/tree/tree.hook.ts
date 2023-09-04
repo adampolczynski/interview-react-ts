@@ -1,19 +1,13 @@
 import { useState, useCallback, useEffect } from 'react'
+import { useJsonBinStorage } from './jsonbin.hook'
 import { TreeService, type TreeNode } from './tree.service'
 
 export const useTree = () => {
-  const [tree, setTree] = useState<TreeNode[]>(TreeService.arrayFromFile())
+  const { storedTree, storeTree, loading: jsonBinLoading } = useJsonBinStorage()
+
+  const [tree, setTree] = useState<TreeNode[]>(storedTree || TreeService.arrayFromFile())
   const [isUpsideDown, setIsUpsideDown] = useState<boolean>(false)
   const [isAlphabetized, setIsAlphabetized] = useState<boolean>(false)
-
-  const addNode = (index: number, indentation: number, inputText: string) => {
-    const node = { key: inputText, indentation, prefix: '-', index: 0, textInput: false }
-    redraw([...tree.slice(0, index + 1), node, ...tree.slice(index + 1)])
-  }
-
-  const removeNode = (index: number) => {
-    redraw([...tree.slice(0, index), ...tree.slice(index + 1)])
-  }
 
   const redrawUpsideDown = useCallback(() => {
     setTree(tree.sort((a, b) => (isUpsideDown ? a.index - b.index : b.index - a.index)))
@@ -64,7 +58,7 @@ export const useTree = () => {
           .split('')
           .filter((v) => v !== '.')
           .join('')
-        const keyDotted = `${dotsRemoved.substring(0, 1)}${dots}${dotsRemoved.substring(1)}`
+        const keyDotted: string = `${dotsRemoved.substring(0, 1)}${dots}${dotsRemoved.substring(1)}`
 
         return [...prev, { ...curr, prefix, index, key: keyDotted }]
       }, [])
@@ -87,9 +81,32 @@ export const useTree = () => {
     [tree, raisePrefixNumber]
   )
 
+  const addNode = useCallback(
+    (index: number, indentation: number, inputText: string) => {
+      const node = { key: inputText, indentation, prefix: '-', index: 0, textInput: false }
+      const newTree = [...tree.slice(0, index + 1), node, ...tree.slice(index + 1)]
+      redraw(newTree)
+      storeTree(newTree)
+    },
+    [tree, redraw, storeTree]
+  )
+
+  const removeNode = useCallback(
+    (index: number) => {
+      const newTree = [...tree.slice(0, index), ...tree.slice(index + 1)]
+      redraw(newTree)
+      storeTree(newTree)
+    },
+    [tree, redraw, storeTree]
+  )
+
   useEffect(() => {
     redraw()
   }, [])
 
-  return { tree, isUpsideDown, redrawUpsideDown, addNode, removeNode, isAlphabetized, alphabetize }
+  useEffect(() => {
+    redraw(storedTree)
+  }, [storedTree])
+
+  return { tree, isUpsideDown, redrawUpsideDown, addNode, removeNode, isAlphabetized, alphabetize, jsonBinLoading }
 }
