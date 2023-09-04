@@ -1,10 +1,7 @@
-# Start here
+# Assignment in React
 
-1. Click "Use this template" button to create a copy of this repository.
-    1. Ideally, create the copy publicly.
-    1. Optionally, if you're concerned about privacy, create the copy as a private copy. Then give `jmcbride@mersive.com` collaborator access.
-1. Run `npm install`
-1. Run `npm run dev`
-1. Open the app on your browser.
-1. Follow the assignemt instructions. 
-1. Once finished, send a link to your repository to your Mersive contact.
+1. Copy `.env.sample` to `.env` and provide JsonBin master/access keys,
+2. Run `npm install`
+3. Run `npm run dev`
+4. Open the app on your browser.
+5. Play with the tree!
